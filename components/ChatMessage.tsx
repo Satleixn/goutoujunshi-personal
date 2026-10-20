@@ -76,13 +76,17 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     <div className={`flex gap-2.5 my-3.5 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       {/* Avatar */}
       <div
-        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold shadow-md ${
+        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold shadow-md overflow-hidden ${
           isUser
             ? "bg-gradient-to-tr from-sky-500 to-blue-600 text-white"
-            : "bg-gradient-to-tr from-amber-500 to-rose-500 text-slate-950"
+            : "border border-amber-500/40 bg-slate-900"
         }`}
       >
-        {isUser ? "我" : "🐶"}
+        {isUser ? (
+          "我"
+        ) : (
+          <img src="/icon.png" alt="军师" className="w-full h-full object-cover" />
+        )}
       </div>
 
       {/* Bubble */}

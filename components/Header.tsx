@@ -19,8 +19,8 @@ export default function Header({
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-2.5 safe-top flex items-center justify-between shadow-sm">
       {/* Brand */}
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-slate-950 font-bold text-sm shadow-md">
-          🐶
+        <div className="w-8 h-8 rounded-xl overflow-hidden shadow-md shrink-0 border border-amber-500/30">
+          <img src="/icon.png" alt="狗头军师" className="w-full h-full object-cover" />
         </div>
         <div>
           <div className="flex items-center gap-1.5">
