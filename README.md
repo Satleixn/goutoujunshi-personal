@@ -64,3 +64,21 @@ npm run dev
    - iOS：点击底部「分享」按钮，选择「**添加到主屏幕**」。
    - Android：点击右上角菜单，选择「**安装应用**」或「**添加到主屏幕**」。
    - 手机桌面上会生成狗头军师图标，点击即进入原生全屏 App 体验！
+
+---
+
+## 致谢与引用 (Acknowledgments & References)
+
+本项目为社区开源项目 **[狗头军师 · Goutoujunshi](https://github.com/shengjidaguai-china/goutoujunshi)** 的个人移动端 Web 衍生版本，遵循 MIT 开源协议。
+
+特此向原作者及开源社区表达诚挚感谢：
+- **核心内核与知识库来源**：[shengjidaguai-china/goutoujunshi](https://github.com/shengjidaguai-china/goutoujunshi)
+  > 由 **升级打怪开源社区** 发起，结合情绪支持、关系科学、沟通心理学与伦理边界建立的优秀恋爱军师决策内核。
+- **移动端交互设计参考**：[Hasen919/goutoujunshi-mobile](https://github.com/Hasen919/goutoujunshi-mobile)
+  > 提供了极佳的手机端 PWA 离线体验与场景胶囊交互思路。
+
+---
+
+## 许可证 (License)
+
+本项目遵循 [MIT License](./LICENSE)。
