@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, Eye, EyeOff, Save, Trash2, CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 import { ApiConfig } from "@/lib/types";
 import { getApiConfig, saveApiConfig, clearAllLocalData, getSavedAccessCode } from "@/lib/storage";
+import { DEFAULT_MODEL } from "@/lib/prompt";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export default function SettingsModal({
   const [config, setConfig] = useState<ApiConfig>({
     baseUrl: "https://api.deepseek.com",
     apiKey: "",
-    model: "deepseek-v4.1-flash-1017",
+    model: DEFAULT_MODEL,
   });
   const [showKey, setShowKey] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -152,7 +153,7 @@ export default function SettingsModal({
               type="text"
               value={config.model}
               onChange={(e) => setConfig({ ...config, model: e.target.value })}
-              placeholder="deepseek-v4.1-flash-1017"
+              placeholder="deepseek-flash"
               className="w-full bg-slate-800/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-mono"
             />
           </div>

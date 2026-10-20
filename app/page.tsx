@@ -138,11 +138,22 @@ export default function Home() {
     setIsAuthenticated(false);
   };
 
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const nextHeight = Math.min(Math.max(textarea.scrollHeight, 40), 220);
+    textarea.style.height = `${nextHeight}px`;
+  };
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend ?? input).trim();
     if (!text || isLoading) return;
 
     setInput("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
     setErrorMsg(null);
 
     const userMsg: ChatMessageType = {
@@ -273,7 +284,21 @@ export default function Home() {
 
   const handleSelectPrompt = (template: string) => {
     setInput(template);
-    textareaRef.current?.focus();
+    setTimeout(() => {
+      adjustTextareaHeight();
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.focus();
+        const match = template.match(/【(.*?)】/);
+        if (match && match.index !== undefined) {
+          const start = match.index;
+          const end = match.index + match[0].length;
+          textarea.setSelectionRange(start, end);
+        } else {
+          textarea.setSelectionRange(template.length, template.length);
+        }
+      }
+    }, 50);
   };
 
   // If server requires ACCESS_CODE and user is not authenticated yet
@@ -369,7 +394,10 @@ export default function Home() {
               ref={textareaRef}
               rows={1}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                adjustTextareaHeight();
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -377,7 +405,7 @@ export default function Home() {
                 }
               }}
               placeholder={`跟军师说说，或者粘贴对方的话...`}
-              className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm focus:outline-none resize-none max-h-28 leading-relaxed"
+              className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm focus:outline-none resize-none leading-relaxed overflow-y-auto"
             />
           </div>
 

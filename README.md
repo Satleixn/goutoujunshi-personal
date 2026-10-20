@@ -17,7 +17,7 @@
   - **100% 隐私本地存储**：档案全保存在手机本地 `localStorage`，不入库不上云，运维成本为 0。
 - 🧠 **内置官方决策内核 (goutoujunshi SKILL.md)**：
   - 严格遵循：**情绪落地（先稳住不内耗） → 事实/推测拆分 → 利益评估与真实信号 → 明确可执行话术 → 观察与停止条件**。
-- ⚡ **DeepSeek V4.1 flash 原生直连**：
+- ⚡ **DeepSeek flash 原生直连**：
   - 采用 Server-Sent Events (SSE) 逐字打字机流式响应。
   - 预留双轨配置：可在 Vercel 环境变量中预设 Key（手机打开 0 密码直接用），也可以在右上角设置面板随时修改 Base URL / Key / Model。
 
@@ -56,7 +56,7 @@ npm run dev
      - `DEEPSEEK_API_KEY`: 填写您的 DeepSeek API Key（填入后，手机打开网页无需手动输入 Key，直接开聊）。
      - `ACCESS_CODE`: （强烈推荐）设置您的专属访问密码。配置后网页会自动开启密码锁屏，输入正确密码才能进入，彻底防止他人窥探与额度盗刷。
      - `DEEPSEEK_BASE_URL`: （可选，若使用官方地址保持默认即可；若使用第三方中转聚合平台则填其中转地址）。
-     - `DEEPSEEK_MODEL`: （可选，默认 `deepseek-v4.1-flash-1017`）。
+     - `DEEPSEEK_MODEL`: （可选，默认 `deepseek-flash`）。
    - 点击 **Deploy**，约 1 分钟即可生成公网可访问的专属专属链接（例如 `https://goutoujunshi-personal.vercel.app`）。
 
 3. **手机上添加到主屏幕**：

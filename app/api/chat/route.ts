@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     const model =
       apiConfig?.model?.trim() ||
       process.env.DEEPSEEK_MODEL?.trim() ||
-      "deepseek-v4.1-flash-1017";
+      "deepseek-flash";
 
     const payload = {
       model,

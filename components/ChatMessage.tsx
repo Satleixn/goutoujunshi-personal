@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check, Sparkles, Clock, Compass } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { Copy, Check, Sparkles } from "lucide-react";
 import { ChatMessage as ChatMessageType } from "@/lib/types";
 
 interface ChatMessageProps {
@@ -63,8 +64,47 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             );
           }
           return (
-            <div key={index} className="whitespace-pre-wrap leading-relaxed text-sm">
-              {formatMarkdownText(part.content, handleCopy, copiedText)}
+            <div key={index} className="text-sm">
+              <ReactMarkdown
+                components={{
+                  strong: ({ children }) => (
+                    <strong className="font-bold text-amber-300/95">{children}</strong>
+                  ),
+                  h1: ({ children }) => (
+                    <h1 className="text-base font-bold text-sky-300 mt-2.5 mb-1.5">{children}</h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-sm font-bold text-sky-300 mt-2 mb-1">{children}</h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-sm font-semibold text-slate-100 mt-1.5 mb-1">{children}</h3>
+                  ),
+                  p: ({ children }) => (
+                    <p className="my-1.5 leading-relaxed text-slate-100">{children}</p>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-outside pl-4 my-1.5 space-y-1 text-slate-200">{children}</ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-outside pl-4 my-1.5 space-y-1 text-slate-200">{children}</ol>
+                  ),
+                  li: ({ children }) => (
+                    <li className="leading-relaxed">{children}</li>
+                  ),
+                  blockquote: ({ children }) => (
+                    <blockquote className="my-2 p-2.5 rounded-lg bg-sky-950/40 border-l-4 border-sky-500 text-sky-100 text-sm">
+                      {children}
+                    </blockquote>
+                  ),
+                  code: ({ children }) => (
+                    <code className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-xs text-amber-300">
+                      {children}
+                    </code>
+                  ),
+                }}
+              >
+                {part.content}
+              </ReactMarkdown>
             </div>
           );
         })}
@@ -168,54 +208,4 @@ function ReplyCard({
       </div>
     </div>
   );
-}
-
-// Basic markdown format helper
-function formatMarkdownText(
-  text: string,
-  onCopy: (t: string) => void,
-  copiedText: string | null
-) {
-  // If text contains blockquotes, give them copy buttons too
-  const lines = text.split("\n");
-  return lines.map((line, i) => {
-    if (line.startsWith("> ")) {
-      const quoteText = line.replace(/^>\s*/, "");
-      const isThisCopied = copiedText === quoteText;
-      return (
-        <div
-          key={i}
-          className="my-1.5 p-2.5 rounded-lg bg-sky-950/30 border-l-4 border-sky-500 flex items-center justify-between text-sky-100 text-sm"
-        >
-          <span>{quoteText}</span>
-          <button
-            onClick={() => onCopy(quoteText)}
-            className="p-1 text-slate-400 hover:text-sky-300 shrink-0 ml-2"
-            title="复制这句"
-          >
-            {isThisCopied ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-            ) : (
-              <Copy className="w-3.5 h-3.5" />
-            )}
-          </button>
-        </div>
-      );
-    }
-    if (line.startsWith("### ")) {
-      return (
-        <h3 key={i} className="font-semibold text-slate-100 text-sm mt-2 mb-1">
-          {line.replace(/^###\s*/, "")}
-        </h3>
-      );
-    }
-    if (line.startsWith("## ")) {
-      return (
-        <h2 key={i} className="font-bold text-slate-100 text-base mt-2.5 mb-1.5 text-sky-300">
-          {line.replace(/^##\s*/, "")}
-        </h2>
-      );
-    }
-    return <span key={i}>{line + (i < lines.length - 1 ? "\n" : "")}</span>;
-  });
 }

@@ -1,7 +1,7 @@
 import { Profile } from "./types";
 
 export const DEFAULT_BASE_URL = "https://api.deepseek.com";
-export const DEFAULT_MODEL = "deepseek-v4.1-flash-1017";
+export const DEFAULT_MODEL = "deepseek-flash";
 
 export function buildSystemPrompt(selfProfile?: Profile, targetProfile?: Profile): string {
   let contextBlock = "【当前上下文档案】\n";
