@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="url(#bg)"/>
+  <!-- Dog Face / Military Hat Concept -->
+  <path d="M25 35 L50 16 L75 35 L75 42 L25 42 Z" fill="#1e293b"/>
+  <rect x="22" y="40" width="56" height="6" rx="3" fill="#0f172a"/>
+  <circle cx="50" cy="30" r="4" fill="#fbbf24"/>
+  <!-- Dog face -->
+  <path d="M28 46 C28 46 22 56 22 66 C22 78 35 84 50 84 C65 84 78 78 78 66 C78 56 72 46 72 46 Z" fill="#f8fafc"/>
+  <!-- Dog ears -->
+  <path d="M24 46 C18 50 14 62 18 72 C20 66 22 56 26 50 Z" fill="#475569"/>
+  <path d="M76 46 C82 50 86 62 82 72 C80 66 78 56 74 50 Z" fill="#475569"/>
+  <!-- Eyes -->
+  <ellipse cx="38" cy="60" rx="3.5" ry="4.5" fill="#0f172a"/>
+  <ellipse cx="62" cy="60" rx="3.5" ry="4.5" fill="#0f172a"/>
+  <circle cx="39.5" cy="58.5" r="1.2" fill="#ffffff"/>
+  <circle cx="63.5" cy="58.5" r="1.2" fill="#ffffff"/>
+  <!-- Nose -->
+  <path d="M46 68 L54 68 C54 68 53 74 50 74 C47 74 46 68 46 68 Z" fill="#0f172a"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "name": "狗头军师 · 个人专属版",
+  "short_name": "狗头军师",
+  "description": "面向心动、暧昧、追求、冷淡与冲突的 AI 恋爱决策助手",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
