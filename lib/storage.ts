@@ -5,6 +5,7 @@ const PROFILES_KEY = "goutoujunshi_profiles";
 const ACTIVE_TARGET_KEY = "goutoujunshi_active_target_id";
 const MESSAGES_KEY = "goutoujunshi_messages";
 const API_CONFIG_KEY = "goutoujunshi_api_config";
+const ACCESS_CODE_KEY = "goutoujunshi_access_code";
 
 const DEFAULT_PROFILES: Profile[] = [
   {
@@ -125,10 +126,38 @@ export function saveApiConfig(config: ApiConfig): void {
   }
 }
 
+export function getSavedAccessCode(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem(ACCESS_CODE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveAccessCode(code: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(ACCESS_CODE_KEY, code.trim());
+  } catch (err) {
+    console.error("Failed to save access code", err);
+  }
+}
+
+export function clearAccessCode(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(ACCESS_CODE_KEY);
+  } catch (err) {
+    console.error("Failed to clear access code", err);
+  }
+}
+
 export function clearAllLocalData(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(PROFILES_KEY);
   localStorage.removeItem(ACTIVE_TARGET_KEY);
   localStorage.removeItem(MESSAGES_KEY);
   localStorage.removeItem(API_CONFIG_KEY);
+  localStorage.removeItem(ACCESS_CODE_KEY);
 }

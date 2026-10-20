@@ -5,7 +5,20 @@ export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages, apiConfig } = body;
+    const { messages, apiConfig, accessCode } = body;
+
+    // 0. Enforce ACCESS_CODE if configured on the server
+    const serverAccessCode = process.env.ACCESS_CODE?.trim();
+    if (serverAccessCode) {
+      const clientCode =
+        accessCode?.trim() || req.headers.get("x-access-code")?.trim();
+      if (clientCode !== serverAccessCode) {
+        return new Response(
+          JSON.stringify({ error: "访问密码错误或未授权，拒绝调用" }),
+          { status: 403, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "messages array is required" }), {

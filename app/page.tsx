@@ -6,6 +6,7 @@ import ChatMessage from "@/components/ChatMessage";
 import QuickPrompts from "@/components/QuickPrompts";
 import TargetProfileDrawer from "@/components/TargetProfileDrawer";
 import SettingsModal from "@/components/SettingsModal";
+import LockScreen from "@/components/LockScreen";
 import { Send, RotateCcw, AlertCircle, Loader2 } from "lucide-react";
 import { Profile, ChatMessage as ChatMessageType } from "@/lib/types";
 import {
@@ -14,6 +15,8 @@ import {
   getMessages,
   saveMessages,
   getApiConfig,
+  getSavedAccessCode,
+  clearAccessCode,
 } from "@/lib/storage";
 import { buildSystemPrompt } from "@/lib/prompt";
 
@@ -26,13 +29,61 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Authentication & Lock Screen States
+  const [requiresAuth, setRequiresAuth] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [currentAccessCode, setCurrentAccessCode] = useState("");
+
   const [isProfilesOpen, setIsProfilesOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Load profiles and message history on mount
+  // Check auth requirement and load profiles & messages
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await fetch("/api/auth");
+        const data = await res.json().catch(() => ({}));
+
+        if (data.requiresAuth) {
+          setRequiresAuth(true);
+          const savedCode = getSavedAccessCode();
+          if (savedCode) {
+            // Verify cached access code
+            const verifyRes = await fetch("/api/auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ accessCode: savedCode }),
+            });
+            const verifyData = await verifyRes.json().catch(() => ({}));
+            if (verifyData.success) {
+              setCurrentAccessCode(savedCode);
+              setIsAuthenticated(true);
+            } else {
+              clearAccessCode();
+              setIsAuthenticated(false);
+            }
+          } else {
+            setIsAuthenticated(false);
+          }
+        } else {
+          setRequiresAuth(false);
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        console.error("Failed to check auth status", err);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuthStatus();
+    loadData();
+  }, []);
+
   const loadData = () => {
     const list = getProfiles();
     setProfiles(list);
@@ -70,10 +121,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -83,6 +130,12 @@ export default function Home() {
       saveMessages([]);
       setErrorMsg(null);
     }
+  };
+
+  const handleLockDevice = () => {
+    clearAccessCode();
+    setCurrentAccessCode("");
+    setIsAuthenticated(false);
   };
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -141,10 +194,16 @@ export default function Home() {
         body: JSON.stringify({
           messages: apiMessages,
           apiConfig,
+          accessCode: currentAccessCode,
         }),
       });
 
       if (!res.ok) {
+        if (res.status === 403) {
+          clearAccessCode();
+          setIsAuthenticated(false);
+          throw new Error("访问密码错误或已失效，请重新输入访问密码解锁");
+        }
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.error || `请求失败 (${res.status})`);
       }
@@ -202,7 +261,7 @@ export default function Home() {
           m.id === assistantMsgId
             ? {
                 ...m,
-                content: `⚠️ 请求中断：${err.message}\n\n请点击右上角【⚙️ 设置】检查 API Key 或中转地址是否正确。`,
+                content: `⚠️ 请求中断：${err.message}\n\n请检查配置或重新验证访问密码。`,
               }
             : m
         )
@@ -216,6 +275,18 @@ export default function Home() {
     setInput(template);
     textareaRef.current?.focus();
   };
+
+  // If server requires ACCESS_CODE and user is not authenticated yet
+  if (!isCheckingAuth && requiresAuth && !isAuthenticated) {
+    return (
+      <LockScreen
+        onSuccess={(code) => {
+          setCurrentAccessCode(code);
+          setIsAuthenticated(true);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col h-[100dvh] bg-slate-950 text-slate-100 overflow-hidden">
@@ -340,6 +411,7 @@ export default function Home() {
         onConfigSaved={() => {
           setErrorMsg(null);
         }}
+        onLockDevice={handleLockDevice}
       />
     </div>
   );

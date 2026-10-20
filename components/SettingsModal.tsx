@@ -1,17 +1,23 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Eye, EyeOff, Save, Trash2, CheckCircle2, ShieldCheck } from "lucide-react";
+import { X, Eye, EyeOff, Save, Trash2, CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 import { ApiConfig } from "@/lib/types";
-import { getApiConfig, saveApiConfig, clearAllLocalData } from "@/lib/storage";
+import { getApiConfig, saveApiConfig, clearAllLocalData, getSavedAccessCode } from "@/lib/storage";
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfigSaved?: () => void;
+  onLockDevice?: () => void;
 }
 
-export default function SettingsModal({ isOpen, onClose, onConfigSaved }: SettingsModalProps) {
+export default function SettingsModal({
+  isOpen,
+  onClose,
+  onConfigSaved,
+  onLockDevice,
+}: SettingsModalProps) {
   const [config, setConfig] = useState<ApiConfig>({
     baseUrl: "https://api.deepseek.com",
     apiKey: "",
@@ -19,11 +25,13 @@ export default function SettingsModal({ isOpen, onClose, onConfigSaved }: Settin
   });
   const [showKey, setShowKey] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [hasSavedCode, setHasSavedCode] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setConfig(getApiConfig());
       setSavedSuccess(false);
+      setHasSavedCode(Boolean(getSavedAccessCode()));
     }
   }, [isOpen]);
 
@@ -71,6 +79,26 @@ export default function SettingsModal({ isOpen, onClose, onConfigSaved }: Settin
               隐私保护提示：您的 API Key 与所有恋爱档案仅加密缓存在手机本地浏览器中，绝不上报给任何开发者服务器。
             </p>
           </div>
+
+          {/* Lock status and action */}
+          {hasSavedCode && onLockDevice && (
+            <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <Lock className="w-4 h-4 text-amber-400" />
+                <span>此设备已记住访问密码</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onLockDevice();
+                }}
+                className="text-xs bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-2.5 py-1 rounded-lg font-medium transition-all"
+              >
+                立即锁定设备
+              </button>
+            </div>
+          )}
 
           {/* Base URL */}
           <div>

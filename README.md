@@ -54,6 +54,7 @@ npm run dev
    - Framework Preset 选择 **Next.js**。
    - **Environment Variables（环境变量配置，可选）**：
      - `DEEPSEEK_API_KEY`: 填写您的 DeepSeek API Key（填入后，手机打开网页无需手动输入 Key，直接开聊）。
+     - `ACCESS_CODE`: （强烈推荐）设置您的专属访问密码。配置后网页会自动开启密码锁屏，输入正确密码才能进入，彻底防止他人窥探与额度盗刷。
      - `DEEPSEEK_BASE_URL`: （可选，若使用官方地址保持默认即可；若使用第三方中转聚合平台则填其中转地址）。
      - `DEEPSEEK_MODEL`: （可选，默认 `deepseek-v4.1-flash-1017`）。
    - 点击 **Deploy**，约 1 分钟即可生成公网可访问的专属专属链接（例如 `https://goutoujunshi-personal.vercel.app`）。
