@@ -102,17 +102,16 @@ export default function Home() {
       const welcome: ChatMessageType = {
         id: "welcome",
         role: "assistant",
-        content: `你好！我是你的个人恋爱与关系参谋。
-无论你现在是心动、暧昧不知所措，还是聊天卡壳、遇到冷淡或冲突，我都在这里。
+        content: `私人关系参谋卷宗已就绪。当前关联对象为 **${active?.name || "对象A"}**，所有对话与档案均保存在本地设备。
 
 :::reply-card
-### 💡 快速上手建议：
-> 直接把对方最新发来的原话粘贴给我，或者在顶部点击【${active?.name || "对象A"}】完善TA的背景。
-- **发送时机**：随时需要决策时
-- **军师原则**：先接住情绪，绝不盲目打鸡血，给出一键可复制的清醒回复
+### 快速使用说明
+> 直接把对方刚发来的原话粘贴到下方，或在顶部点击对象名称补充背景。
+- **分析流程**：情绪落地 · 事实与推测拆分 · 局势研判 · 成品话术与后续分支
+- **参谋原则**：站在你的长期选择权与情绪稳定一边，不打鸡血，只给可执行方案
 :::
 
-可以直接点击下方快捷胶囊，或者直接输入你的困惑！`,
+可点选下方场景标签快速填入模板，或直接输入当前处境。`,
         createdAt: Date.now(),
       };
       setMessages([welcome]);
@@ -272,7 +271,7 @@ export default function Home() {
           m.id === assistantMsgId
             ? {
                 ...m,
-                content: `⚠️ 请求中断：${err.message}\n\n请检查配置或重新验证访问密码。`,
+                content: `请求中断：${err.message}\n\n请检查配置或重新验证访问密码。`,
               }
             : m
         )
@@ -314,7 +313,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-slate-950 text-slate-100 overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-surface-page text-ink-primary overflow-hidden">
       {/* Top Header */}
       <Header
         activeTarget={activeTarget}
@@ -322,104 +321,121 @@ export default function Home() {
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
-      {/* Target Info Ribbon */}
+      {/* Signature Dossier Meta Ribbon (36px) */}
       {activeTarget && (
-        <div className="bg-slate-900/60 border-b border-slate-800/50 px-4 py-1.5 text-xs flex items-center justify-between text-slate-400">
-          <div className="flex items-center gap-2 truncate">
-            <span>当前参谋对象：</span>
-            <span className="text-slate-200 font-medium">{activeTarget.name}</span>
+        <div className="h-9 bg-surface-deep border-b border-hairline px-4 text-xs flex items-center justify-between text-ink-muted font-mono tabular-nums shrink-0">
+          <div className="flex items-center gap-3 truncate">
+            <span>
+              卷宗 <strong className="font-normal text-ink-secondary">{activeTarget.name}</strong>
+            </span>
             {activeTarget.relation && (
-              <span className="text-[10px] text-rose-400 bg-rose-950/40 px-1.5 py-0.2 rounded border border-rose-900/50">
-                {activeTarget.relation}
-              </span>
+              <>
+                <span className="text-ink-muted/50">·</span>
+                <span className="text-ink-secondary">{activeTarget.relation}</span>
+              </>
             )}
             {activeTarget.mbti && (
-              <span className="text-[10px] text-slate-300 font-mono">
-                {activeTarget.mbti}
-              </span>
+              <>
+                <span className="text-ink-muted/50">·</span>
+                <span className="text-ink-secondary">{activeTarget.mbti}</span>
+              </>
+            )}
+            {activeTarget.score !== undefined && (
+              <>
+                <span className="text-ink-muted/50">·</span>
+                <span className="text-accent">{activeTarget.score} / 100</span>
+              </>
             )}
           </div>
           <button
             onClick={handleClearChat}
-            className="text-slate-500 hover:text-slate-300 p-1 shrink-0 flex items-center gap-1"
+            type="button"
+            className="text-ink-muted hover:text-ink-primary px-2 py-1 rounded-md shrink-0 flex items-center gap-1.5 transition-colors duration-150 ease-unslop"
             title="清空当前聊天记录"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="text-[10px]">清屏</span>
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
+            <span className="text-xs font-sans">清屏</span>
           </button>
         </div>
       )}
 
       {/* Chat Messages Flow */}
-      <main className="flex-1 overflow-y-auto px-3.5 py-2 space-y-1">
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
+      <main className="flex-1 overflow-y-auto px-4 py-2">
+        <div className="max-w-3xl mx-auto">
+          {messages.map((msg) => (
+            <ChatMessage key={msg.id} message={msg} />
+          ))}
 
-        {isLoading && (
-          <div className="flex items-center gap-2 text-slate-400 text-xs px-3 py-2">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-            <span>军师正在研判局势并组织话术...</span>
-          </div>
-        )}
-
-        {errorMsg && (
-          <div className="mx-2 my-2 p-3 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start gap-2.5 text-xs text-rose-300">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
-            <div className="flex-1">
-              <p className="font-medium">连接提示</p>
-              <p className="mt-0.5 text-rose-400">{errorMsg}</p>
+          {isLoading && (
+            <div className="flex items-center gap-2 text-ink-muted text-xs px-3 py-2">
+              <Loader2 className="w-4 h-4 animate-spin text-accent" strokeWidth={1.5} />
+              <span>正在拆解局势与拟定话术</span>
             </div>
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="text-xs bg-rose-900/80 hover:bg-rose-800 text-white px-2.5 py-1 rounded-lg shrink-0"
-            >
-              去配置
-            </button>
-          </div>
-        )}
+          )}
 
-        <div ref={messagesEndRef} className="h-2" />
+          {errorMsg && (
+            <div className="my-3 p-3.5 rounded-xl bg-surface-card border border-negative/40 flex items-start gap-3 text-xs text-ink-primary">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-negative" strokeWidth={1.5} />
+              <div className="flex-1">
+                <p className="font-medium text-ink-primary">连接异常</p>
+                <p className="mt-0.5 text-ink-secondary">{errorMsg}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSettingsOpen(true)}
+                className="h-7 px-2.5 rounded-md bg-surface-raised hover:bg-surface-deep border border-hairline text-ink-primary shrink-0 transition-colors duration-150 ease-unslop"
+              >
+                检查配置
+              </button>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} className="h-2" />
+        </div>
       </main>
 
       {/* Bottom Area (Quick prompts + Input) */}
-      <footer className="bg-slate-900/90 backdrop-blur-md border-t border-slate-800/80 safe-bottom">
-        {/* Quick Prompts capsules */}
-        <QuickPrompts onSelectPrompt={handleSelectPrompt} />
+      <footer className="bg-surface-page/95 backdrop-blur-md border-t border-hairline safe-bottom shrink-0">
+        <div className="max-w-3xl mx-auto">
+          {/* Quick Prompts */}
+          <QuickPrompts onSelectPrompt={handleSelectPrompt} />
 
-        {/* Input Bar */}
-        <div className="p-2.5 flex items-end gap-2">
-          <div className="flex-1 bg-slate-800/90 border border-slate-700/80 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-sky-500/80 focus-within:border-transparent transition-all">
-            <textarea
-              ref={textareaRef}
-              rows={1}
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                adjustTextareaHeight();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder={`跟军师说说，或者粘贴对方的话...`}
-              className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm focus:outline-none resize-none leading-relaxed overflow-y-auto"
-            />
+          {/* Input Bar */}
+          <div className="px-4 pb-3 pt-1 flex items-end gap-2">
+            <div className="flex-1 bg-surface-deep border border-hairline rounded-lg px-3 py-2 focus-within:border-hairline-strong transition-colors duration-150 ease-unslop">
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  adjustTextareaHeight();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="粘贴对方原话，或描述当前处境"
+                className="w-full bg-transparent text-ink-primary placeholder-ink-muted text-sm focus:outline-none resize-none leading-relaxed overflow-y-auto"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleSendMessage()}
+              disabled={!input.trim() || isLoading}
+              className={`h-10 px-4 rounded-lg flex items-center justify-center gap-1.5 text-xs font-medium transition-[background-color,color,transform,opacity] duration-150 ease-unslop shrink-0 ${
+                input.trim() && !isLoading
+                  ? "bg-ink-primary text-surface-deep active:scale-[0.97]"
+                  : "bg-surface-card text-ink-muted border border-hairline cursor-not-allowed"
+              }`}
+            >
+              <span>发送</span>
+              <Send className="w-3.5 h-3.5" strokeWidth={1.5} />
+            </button>
           </div>
-
-          <button
-            onClick={() => handleSendMessage()}
-            disabled={!input.trim() || isLoading}
-            className={`p-3 rounded-2xl flex items-center justify-center transition-all shrink-0 ${
-              input.trim() && !isLoading
-                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30 active:scale-95"
-                : "bg-slate-800 text-slate-500 cursor-not-allowed"
-            }`}
-          >
-            <Send className="w-4 h-4" />
-          </button>
         </div>
       </footer>
 

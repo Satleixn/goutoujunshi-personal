@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Lock, Eye, EyeOff, KeyRound, AlertCircle, Loader2 } from "lucide-react";
+import { Lock, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { saveAccessCode } from "@/lib/storage";
 
 interface LockScreenProps {
@@ -19,7 +19,7 @@ export default function LockScreen({ onSuccess }: LockScreenProps) {
     e.preventDefault();
     const cleanCode = code.trim();
     if (!cleanCode) {
-      setErrorMsg("请输入访问密码");
+      setErrorMsg("请输入访问口令");
       return;
     }
 
@@ -36,7 +36,7 @@ export default function LockScreen({ onSuccess }: LockScreenProps) {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "访问密码错误，请重新输入");
+        throw new Error(data.error || "访问口令未通过校验");
       }
 
       if (remember) {
@@ -45,40 +45,42 @@ export default function LockScreen({ onSuccess }: LockScreenProps) {
 
       onSuccess(cleanCode);
     } catch (err: any) {
-      setErrorMsg(err.message || "密码校验失败");
+      setErrorMsg(err.message || "口令校验失败");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="w-full max-w-sm bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
-        {/* Glow ambient background */}
-        <div className="absolute -top-12 -left-12 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-12 -right-12 w-36 h-36 bg-sky-500/10 rounded-full blur-2xl pointer-events-none" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-page text-ink-primary">
+      <div className="w-full max-w-sm bg-surface-card border border-hairline-strong rounded-2xl p-6 shadow-top-highlight space-y-5">
+        {/* Dossier Header Meta */}
+        <div className="flex items-center justify-between pb-3 border-b border-hairline text-xs font-mono tabular-nums text-ink-muted">
+          <span>PRIVATE DOSSIER</span>
+          <span className="flex items-center gap-1.5 text-accent">
+            <Lock className="w-3.5 h-3.5" strokeWidth={1.5} />
+            <span>LOCKED</span>
+          </span>
+        </div>
 
-        {/* 3D App Icon */}
-        <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xl border-2 border-amber-500/40 relative mb-4">
-          <img src="/icon.png" alt="狗头军师" className="w-full h-full object-cover" />
-          <div className="absolute bottom-0 right-0 bg-slate-950/80 p-1 rounded-tl-lg">
-            <Lock className="w-3.5 h-3.5 text-amber-400" />
+        {/* Brand & Description */}
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl overflow-hidden border border-hairline bg-surface-raised shrink-0">
+            <img src="/icon.png" alt="狗头军师" className="w-full h-full object-cover" />
+          </div>
+          <div>
+            <h1 className="text-base font-medium text-ink-primary">
+              狗头军师 · 私人卷宗
+            </h1>
+            <p className="text-xs text-ink-secondary mt-0.5 leading-relaxed">
+              站点已开启访问保护，请输入预设口令解锁
+            </p>
           </div>
         </div>
 
-        <h1 className="text-xl font-bold text-slate-100 flex items-center gap-1.5">
-          狗头军师
-          <span className="text-xs bg-amber-950/60 text-amber-300 border border-amber-800/50 px-1.5 py-0.5 rounded font-mono">
-            专属受控
-          </span>
-        </h1>
-        <p className="text-xs text-slate-400 mt-1.5 mb-6 max-w-[240px] leading-relaxed">
-          此站点已启用个人密码保护，请输入您在 Vercel 配置的访问密码
-        </p>
-
         {/* Form */}
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          <div className="relative text-left">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <div className="relative">
               <input
                 type={showCode ? "text" : "password"}
@@ -88,62 +90,58 @@ export default function LockScreen({ onSuccess }: LockScreenProps) {
                   setCode(e.target.value);
                   if (errorMsg) setErrorMsg(null);
                 }}
-                placeholder="输入访问密码..."
-                className={`w-full bg-slate-800/90 border rounded-2xl pl-10 pr-10 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 text-sm transition-all ${
+                placeholder="输入访问口令"
+                className={`w-full h-10 bg-surface-deep border rounded-lg pl-3 pr-10 text-ink-primary placeholder-ink-muted focus:outline-none text-sm transition-colors duration-150 ease-unslop ${
                   errorMsg
-                    ? "border-rose-500/80 focus:ring-rose-500"
-                    : "border-slate-700/80 focus:ring-sky-500"
+                    ? "border-negative"
+                    : "border-hairline focus:border-hairline-strong"
                 }`}
               />
-              <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <button
                 type="button"
                 onClick={() => setShowCode(!showCode)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-0.5"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-primary p-0.5"
               >
-                {showCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showCode ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
               </button>
             </div>
 
             {errorMsg && (
-              <div className="flex items-center gap-1.5 text-rose-400 text-xs mt-2 animate-in fade-in slide-in-from-top-1">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <div className="flex items-center gap-1.5 text-negative text-xs mt-2">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
                 <span>{errorMsg}</span>
               </div>
             )}
           </div>
 
-          <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer select-none justify-start px-1">
+          <label className="flex items-center gap-2 text-xs text-ink-secondary cursor-pointer select-none">
             <input
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              className="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-sky-500/20 w-4 h-4"
+              className="rounded bg-surface-deep border-hairline accent-accent w-3.5 h-3.5"
             />
-            <span>记住这台设备（后续打开免重复输入）</span>
+            <span>在此设备记住口令</span>
           </label>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-2xl font-medium text-sm text-white bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            className="w-full h-10 rounded-lg font-medium text-xs bg-ink-primary text-surface-deep transition-transform duration-150 ease-unslop active:scale-[0.98] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                验证中...
+                <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
+                <span>正在校验</span>
               </>
             ) : (
-              <>
-                <Lock className="w-4 h-4" />
-                验证并进入
-              </>
+              <span>解锁卷宗</span>
             )}
           </button>
         </form>
 
-        <p className="text-[11px] text-slate-500 mt-6 leading-relaxed">
-          密码为您在 Vercel 环境变量中设置的 <code className="text-slate-400">ACCESS_CODE</code>
+        <p className="text-xs text-ink-muted pt-1 border-t border-hairline leading-relaxed">
+          口令对应部署环境变量中的 <code className="font-mono text-ink-secondary">ACCESS_CODE</code>
         </p>
       </div>
     </div>

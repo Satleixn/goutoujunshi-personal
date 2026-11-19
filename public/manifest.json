@@ -4,8 +4,8 @@
   "description": "面向心动、暧昧、追求、冷淡与冲突的 AI 恋爱决策助手",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#090d16",
+  "background_color": "#161513",
+  "theme_color": "#161513",
   "icons": [
     {
       "src": "/icon-192.png",

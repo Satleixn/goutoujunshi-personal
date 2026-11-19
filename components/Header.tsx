@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Settings, Users, ChevronDown } from "lucide-react";
+import { Settings, ChevronDown } from "lucide-react";
 import { Profile } from "@/lib/types";
 
 interface HeaderProps {
@@ -16,21 +16,18 @@ export default function Header({
   onOpenSettings,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-2.5 safe-top flex items-center justify-between shadow-sm">
+    <header className="sticky top-0 z-40 h-14 bg-surface-page/95 backdrop-blur-md border-b border-hairline px-4 safe-top flex items-center justify-between shrink-0">
       {/* Brand */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl overflow-hidden shadow-md shrink-0 border border-amber-500/30">
+      <div className="flex items-center gap-3">
+        <div className="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-hairline bg-surface-raised flex items-center justify-center">
           <img src="/icon.png" alt="狗头军师" className="w-full h-full object-cover" />
         </div>
         <div>
-          <div className="flex items-center gap-1.5">
-            <h1 className="font-bold text-sm text-slate-100 leading-tight">狗头军师</h1>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-1 rounded border border-slate-700 font-mono">
-              个人版
-            </span>
-          </div>
-          <p className="text-[11px] text-slate-400 leading-tight">
-            恋爱局势看清 · 话术即抄即发
+          <h1 className="font-medium text-sm text-ink-primary leading-none">
+            狗头军师
+          </h1>
+          <p className="text-xs text-ink-muted mt-1 leading-none">
+            私人关系参谋
           </p>
         </div>
       </div>
@@ -41,18 +38,18 @@ export default function Header({
         <button
           onClick={onOpenProfiles}
           type="button"
-          className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700/80 border border-slate-700/80 rounded-full pl-2.5 pr-2 py-1 text-xs text-slate-200 transition-all active:scale-95"
+          className="h-8 px-3 rounded-lg bg-surface-card hover:bg-surface-raised border border-hairline flex items-center gap-2 text-xs text-ink-primary transition-[background-color,border-color,transform] duration-150 ease-unslop active:scale-[0.97]"
         >
-          <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
-          <span className="font-medium max-w-[80px] truncate">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+          <span className="font-medium max-w-[88px] truncate">
             {activeTarget ? activeTarget.name : "选择对象"}
           </span>
           {activeTarget?.score !== undefined && (
-            <span className="text-[10px] text-amber-300 font-mono bg-amber-950/60 px-1 rounded">
-              {activeTarget.score}分
+            <span className="text-xs text-ink-muted font-mono tabular-nums">
+              {activeTarget.score}
             </span>
           )}
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          <ChevronDown className="w-4 h-4 text-ink-muted" strokeWidth={1.5} />
         </button>
 
         {/* Settings button */}
@@ -60,9 +57,9 @@ export default function Header({
           onClick={onOpenSettings}
           type="button"
           aria-label="设置"
-          className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700/80 border border-slate-700/80 text-slate-300 hover:text-white transition-all active:scale-95"
+          className="w-8 h-8 rounded-lg bg-surface-card hover:bg-surface-raised border border-hairline flex items-center justify-center text-ink-secondary hover:text-ink-primary transition-[background-color,color,transform] duration-150 ease-unslop active:scale-[0.97]"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-4 h-4" strokeWidth={1.5} />
         </button>
       </div>
     </header>

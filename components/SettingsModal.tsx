@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Eye, EyeOff, Save, Trash2, CheckCircle2, ShieldCheck, Lock } from "lucide-react";
+import { X, Eye, EyeOff, Trash2, Check, ShieldCheck, Lock } from "lucide-react";
 import { ApiConfig } from "@/lib/types";
 import { getApiConfig, saveApiConfig, clearAllLocalData, getSavedAccessCode } from "@/lib/storage";
 import { DEFAULT_MODEL } from "@/lib/prompt";
@@ -45,7 +45,7 @@ export default function SettingsModal({
       setSavedSuccess(false);
       onConfigSaved?.();
       onClose();
-    }, 600);
+    }, 500);
   };
 
   const handleClear = () => {
@@ -57,36 +57,38 @@ export default function SettingsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
-      <div className="w-full sm:max-w-md bg-slate-900 border border-slate-800 rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">⚙️</span>
-            <h2 className="font-semibold text-lg text-slate-100">API 与个人配置</h2>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
+      <div className="w-full sm:max-w-md bg-surface-page border border-hairline-strong rounded-t-2xl sm:rounded-2xl p-5 shadow-top-highlight flex flex-col max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-hairline">
+          <div>
+            <h2 className="font-medium text-base text-ink-primary">接口与隐私设置</h2>
+            <p className="text-xs text-ink-muted mt-0.5">配置自定义模型密钥或管理本地缓存</p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-full text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+            aria-label="关闭"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-muted hover:text-ink-primary hover:bg-surface-card transition-colors duration-150 ease-unslop"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" strokeWidth={1.5} />
           </button>
         </div>
 
         <div className="py-4 space-y-4 text-sm">
-          {/* Note */}
-          <div className="bg-sky-950/40 border border-sky-800/50 rounded-xl p-3 flex gap-2.5 items-start text-xs text-sky-300">
-            <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-sky-400" />
-            <p>
-              隐私保护提示：您的 API Key 与所有恋爱档案仅加密缓存在手机本地浏览器中，绝不上报给任何开发者服务器。
+          {/* Privacy Note */}
+          <div className="bg-surface-card border border-hairline rounded-xl p-3 flex gap-2.5 items-start text-xs text-ink-secondary">
+            <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-accent" strokeWidth={1.5} />
+            <p className="leading-relaxed">
+              您的 API Key 与所有关系档案仅保存在本地浏览器缓存中，不会上传至任何第三方服务器。
             </p>
           </div>
 
           {/* Lock status and action */}
           {hasSavedCode && onLockDevice && (
-            <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <Lock className="w-4 h-4 text-amber-400" />
-                <span>此设备已记住访问密码</span>
+            <div className="bg-surface-card border border-hairline rounded-xl p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-ink-secondary">
+                <Lock className="w-4 h-4 text-accent" strokeWidth={1.5} />
+                <span>此设备已记住访问口令</span>
               </div>
               <button
                 type="button"
@@ -94,16 +96,16 @@ export default function SettingsModal({
                   onClose();
                   onLockDevice();
                 }}
-                className="text-xs bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 px-2.5 py-1 rounded-lg font-medium transition-all"
+                className="h-7 px-2.5 rounded-md text-xs bg-surface-raised hover:bg-surface-deep text-ink-primary border border-hairline transition-colors duration-150 ease-unslop"
               >
-                立即锁定设备
+                立即锁定
               </button>
             </div>
           )}
 
           {/* Base URL */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">
+            <label className="block text-xs text-ink-secondary mb-1.5">
               API 基础端点 (Base URL)
             </label>
             <input
@@ -111,16 +113,16 @@ export default function SettingsModal({
               value={config.baseUrl}
               onChange={(e) => setConfig({ ...config, baseUrl: e.target.value })}
               placeholder="https://api.deepseek.com"
-              className="w-full bg-slate-800/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+              className="w-full h-10 bg-surface-deep border border-hairline focus:border-hairline-strong rounded-lg px-3 text-ink-primary placeholder-ink-muted focus:outline-none text-sm font-mono"
             />
-            <p className="text-[11px] text-slate-400 mt-1">
-              默认官方地址。使用第三方中转聚合平台可直接填其提供的 URL。
+            <p className="text-xs text-ink-muted mt-1">
+              默认官方地址。若使用聚合中转平台可填写对应 URL
             </p>
           </div>
 
           {/* API Key */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">
+            <label className="block text-xs text-ink-secondary mb-1.5">
               DeepSeek API Key
             </label>
             <div className="relative">
@@ -129,63 +131,64 @@ export default function SettingsModal({
                 value={config.apiKey}
                 onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
                 placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-                className="w-full bg-slate-800/80 border border-slate-700/80 rounded-xl pl-3.5 pr-10 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-mono"
+                className="w-full h-10 bg-surface-deep border border-hairline focus:border-hairline-strong rounded-lg pl-3 pr-10 text-ink-primary placeholder-ink-muted focus:outline-none text-sm font-mono"
               />
               <button
                 type="button"
                 onClick={() => setShowKey(!showKey)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-primary"
               >
-                {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showKey ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              若在 Vercel 环境变量中配置了 DEEPSEEK_API_KEY，此处可留空直接使用。
+            <p className="text-xs text-ink-muted mt-1">
+              若服务端已配置 DEEPSEEK_API_KEY 环境变量，此处可留空
             </p>
           </div>
 
           {/* Model */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">
-              模型型号 (Model)
+            <label className="block text-xs text-ink-secondary mb-1.5">
+              模型名称 (Model)
             </label>
             <input
               type="text"
               value={config.model}
               onChange={(e) => setConfig({ ...config, model: e.target.value })}
               placeholder="deepseek-flash"
-              className="w-full bg-slate-800/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-mono"
+              className="w-full h-10 bg-surface-deep border border-hairline focus:border-hairline-strong rounded-lg px-3 text-ink-primary placeholder-ink-muted focus:outline-none text-sm font-mono"
             />
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-3">
+        <div className="pt-3 border-t border-hairline flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={handleClear}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-xl transition-colors"
+            className="h-10 px-3 rounded-lg flex items-center gap-1.5 text-xs text-negative hover:bg-surface-card transition-colors duration-150 ease-unslop"
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            清空本地数据
+            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+            <span>清空本地数据</span>
           </button>
 
           <button
             type="button"
             onClick={handleSave}
             disabled={savedSuccess}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 text-sm transition-all"
+            className={`flex-1 sm:flex-initial h-10 px-5 rounded-lg flex items-center justify-center gap-1.5 font-medium text-xs transition-[background-color,color,transform] duration-150 ease-unslop active:scale-[0.98] ${
+              savedSuccess
+                ? "bg-positive text-surface-deep"
+                : "bg-ink-primary text-surface-deep"
+            }`}
           >
             {savedSuccess ? (
               <>
-                <CheckCircle2 className="w-4 h-4 text-white" />
-                已保存
+                <Check className="w-4 h-4" strokeWidth={1.8} />
+                <span>已保存</span>
               </>
             ) : (
-              <>
-                <Save className="w-4 h-4" />
-                保存配置
-              </>
+              <span>保存配置</span>
             )}
           </button>
         </div>

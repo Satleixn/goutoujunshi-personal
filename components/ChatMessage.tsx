@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Copy, Check, Sparkles } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { ChatMessage as ChatMessageType } from "@/lib/types";
 
 interface ChatMessageProps {
@@ -18,12 +18,11 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     setCopiedText(text);
     setTimeout(() => {
       setCopiedText(null);
-    }, 2000);
+    }, 1800);
   };
 
-  // Helper to parse content into reply cards vs regular markdown
+  // Parse content into reply cards vs regular markdown
   const renderContent = (content: string) => {
-    // Check for :::reply-card blocks
     const cardRegex = /:::reply-card([\s\S]*?):::/g;
     const parts = [];
     let lastIndex = 0;
@@ -68,36 +67,36 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               <ReactMarkdown
                 components={{
                   strong: ({ children }) => (
-                    <strong className="font-bold text-amber-300/95">{children}</strong>
+                    <strong className="font-medium text-ink-primary">{children}</strong>
                   ),
                   h1: ({ children }) => (
-                    <h1 className="text-base font-bold text-sky-300 mt-2.5 mb-1.5">{children}</h1>
+                    <h1 className="text-base font-medium text-ink-primary mt-3 mb-1.5">{children}</h1>
                   ),
                   h2: ({ children }) => (
-                    <h2 className="text-sm font-bold text-sky-300 mt-2 mb-1">{children}</h2>
+                    <h2 className="text-sm font-medium text-ink-primary mt-2.5 mb-1">{children}</h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-sm font-semibold text-slate-100 mt-1.5 mb-1">{children}</h3>
+                    <h3 className="text-sm font-medium text-ink-primary mt-2 mb-1">{children}</h3>
                   ),
                   p: ({ children }) => (
-                    <p className="my-1.5 leading-relaxed text-slate-100">{children}</p>
+                    <p className="my-1.5 leading-relaxed text-ink-secondary">{children}</p>
                   ),
                   ul: ({ children }) => (
-                    <ul className="list-disc list-outside pl-4 my-1.5 space-y-1 text-slate-200">{children}</ul>
+                    <ul className="list-disc list-outside pl-4 my-1.5 space-y-1 text-ink-secondary">{children}</ul>
                   ),
                   ol: ({ children }) => (
-                    <ol className="list-decimal list-outside pl-4 my-1.5 space-y-1 text-slate-200">{children}</ol>
+                    <ol className="list-decimal list-outside pl-4 my-1.5 space-y-1 text-ink-secondary">{children}</ol>
                   ),
                   li: ({ children }) => (
                     <li className="leading-relaxed">{children}</li>
                   ),
                   blockquote: ({ children }) => (
-                    <blockquote className="my-2 p-2.5 rounded-lg bg-sky-950/40 border-l-4 border-sky-500 text-sky-100 text-sm">
+                    <blockquote className="my-2 p-3 rounded-lg bg-surface-deep border-l-2 border-accent text-ink-primary text-sm">
                       {children}
                     </blockquote>
                   ),
                   code: ({ children }) => (
-                    <code className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-xs text-amber-300">
+                    <code className="px-1.5 py-0.5 rounded bg-surface-deep border border-hairline font-mono text-xs text-ink-primary">
                       {children}
                     </code>
                   ),
@@ -112,42 +111,32 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     );
   };
 
+  if (isUser) {
+    return (
+      <div className="flex justify-end my-4">
+        <div className="max-w-[85%] sm:max-w-[78%] rounded-xl px-4 py-3 bg-surface-raised border border-hairline text-ink-primary">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`flex gap-2.5 my-3.5 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-      {/* Avatar */}
-      <div
-        className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold shadow-md overflow-hidden ${
-          isUser
-            ? "bg-gradient-to-tr from-sky-500 to-blue-600 text-white"
-            : "border border-amber-500/40 bg-slate-900"
-        }`}
-      >
-        {isUser ? (
-          "我"
-        ) : (
-          <img src="/icon.png" alt="军师" className="w-full h-full object-cover" />
-        )}
+    <div className="flex gap-3 my-4 items-start">
+      {/* Advisor Mark */}
+      <div className="w-7 h-7 rounded-lg shrink-0 mt-0.5 overflow-hidden border border-hairline bg-surface-card">
+        <img src="/icon.png" alt="军师" className="w-full h-full object-cover" />
       </div>
 
-      {/* Bubble */}
-      <div
-        className={`max-w-[86%] sm:max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${
-          isUser
-            ? "bg-sky-600 text-white rounded-tr-none"
-            : "bg-slate-800/90 border border-slate-700/60 text-slate-100 rounded-tl-none"
-        }`}
-      >
-        {isUser ? (
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
-        ) : (
-          renderContent(message.content)
-        )}
+      {/* Advisor Content */}
+      <div className="flex-1 min-w-0 max-w-[90%] sm:max-w-[84%] rounded-xl px-4 py-3 bg-surface-card/60 border border-hairline text-ink-primary">
+        {renderContent(message.content)}
       </div>
     </div>
   );
 }
 
-// Sub-component for Reply Card
+// THE MOMENT: Crafted Reply Dossier Card (Outer radius 12px, padding 12px/16px, inner radius 8px)
 function ReplyCard({
   rawCard,
   onCopy,
@@ -157,51 +146,52 @@ function ReplyCard({
   onCopy: (text: string) => void;
   isCopied: boolean;
 }) {
-  // Extract blockquote text
   const quoteMatch = rawCard.match(/>\s*(.+)/);
   const replyText = quoteMatch ? quoteMatch[1].trim() : rawCard;
 
   return (
-    <div className="my-2.5 p-3.5 rounded-xl bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/40 shadow-lg">
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-500/20">
-        <div className="flex items-center gap-1.5 text-amber-400 font-medium text-xs">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>建议直接发送成文</span>
+    <div className="my-3 p-3.5 rounded-xl bg-surface-card border border-hairline-strong border-l-2 border-l-accent shadow-top-highlight">
+      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-hairline">
+        <div className="flex items-center gap-2">
+          <span className="font-mono tabular-nums text-xs font-medium text-accent">
+            建议成文 · 首选方案
+          </span>
         </div>
         <button
+          type="button"
           onClick={() => onCopy(replyText)}
-          className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium transition-all ${
+          className={`h-7 px-2.5 rounded-md text-xs font-medium flex items-center gap-1.5 border transition-[background-color,color,transform] duration-150 ease-unslop active:scale-[0.97] ${
             isCopied
-              ? "bg-emerald-500 text-white"
-              : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 active:scale-95"
+              ? "bg-positive text-surface-deep border-transparent"
+              : "bg-surface-raised text-ink-primary border-hairline hover:border-hairline-strong"
           }`}
         >
           {isCopied ? (
             <>
-              <Check className="w-3.5 h-3.5" />
-              已复制
+              <Check className="w-3.5 h-3.5" strokeWidth={1.8} />
+              <span>已复制</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5" />
-              一键复制
+              <Copy className="w-3.5 h-3.5 text-ink-secondary" strokeWidth={1.5} />
+              <span>复制话术</span>
             </>
           )}
         </button>
       </div>
 
-      {/* The reply text */}
-      <div className="p-3 bg-slate-950/70 rounded-lg border border-slate-800 text-slate-100 font-medium text-sm leading-relaxed select-all">
+      {/* Reply text box (inner radius = 8px) */}
+      <div className="p-3 bg-surface-deep rounded-lg border border-hairline text-ink-primary text-sm leading-relaxed select-all">
         {replyText}
       </div>
 
       {/* Extra card details like timing/reason */}
-      <div className="mt-2 text-xs text-slate-400 space-y-1">
+      <div className="mt-2.5 text-xs text-ink-muted space-y-1">
         {rawCard
           .split("\n")
           .filter((line) => !line.startsWith(">") && !line.startsWith("###") && line.trim())
           .map((line, idx) => (
-            <p key={idx} className="leading-snug">
+            <p key={idx} className="leading-relaxed">
               {line.replace(/^-\s*/, "")}
             </p>
           ))}
